@@ -6,64 +6,48 @@ module.exports = {
 	config: {
 		name: "adminonly",
 		aliases: ["adonly", "onlyad", "onlyadmin"],
-		version: "1.5",
-		author: "NTKhang",
+		version: "2.1",
+		author: "Ajmaul MOD FIX",
 		countDown: 5,
 		role: 3,
-		description: {
-			vi: "bật/tắt chế độ chỉ admin mới có thể sử dụng bot",
-			en: "turn on/off only admin can use bot"
-		},
+		description: "Only admin can use bot (silent mode)",
 		category: "owner",
-		guide: {
-			vi: "   {pn} [on | off]: bật/tắt chế độ chỉ admin mới có thể sử dụng bot"
-				+ "\n   {pn} noti [on | off]: bật/tắt thông báo khi người dùng không phải là admin sử dụng bot",
-			en: "   {pn} [on | off]: turn on/off the mode only admin can use bot"
-				+ "\n   {pn} noti [on | off]: turn on/off the notification when user is not admin use bot"
-		}
+		guide: "{pn} on/off"
 	},
 
-	langs: {
-		vi: {
-			turnedOn: "Đã bật chế độ chỉ admin mới có thể sử dụng bot",
-			turnedOff: "Đã tắt chế độ chỉ admin mới có thể sử dụng bot",
-			turnedOnNoti: "Đã bật thông báo khi người dùng không phải là admin sử dụng bot",
-			turnedOffNoti: "Đã tắt thông báo khi người dùng không phải là admin sử dụng bot"
-		},
-		en: {
-			turnedOn: "Turned on the mode only admin can use bot",
-			turnedOff: "Turned off the mode only admin can use bot",
-			turnedOnNoti: "Turned on the notification when user is not admin use bot",
-			turnedOffNoti: "Turned off the notification when user is not admin use bot"
-		}
-	},
-
-	onStart: function ({ args, message, getLang }) {
-		let isSetNoti = false;
+	onStart: async function ({ args, message }) {
 		let value;
-		let indexGetVal = 0;
 
-		if (args[0] == "noti") {
-			isSetNoti = true;
-			indexGetVal = 1;
-		}
-
-		if (args[indexGetVal] == "on")
+		if (args[0] == "on")
 			value = true;
-		else if (args[indexGetVal] == "off")
+		else if (args[0] == "off")
 			value = false;
 		else
-			return message.SyntaxError();
+			return message.reply("Use: adminonly on/off");
 
-		if (isSetNoti) {
-			config.hideNotiMessage.adminOnly = !value;
-			message.reply(getLang(value ? "turnedOnNoti" : "turnedOffNoti"));
-		}
-		else {
-			config.adminOnly.enable = value;
-			message.reply(getLang(value ? "turnedOn" : "turnedOff"));
-		}
+		config.adminOnly = {
+			enable: value,
+			silent: true
+		};
 
 		fs.writeFileSync(client.dirConfig, JSON.stringify(config, null, 2));
+
+		return message.reply(
+			value
+				? "✅ Admin Only Mode ON (Only admins can use bot)"
+				: "❌ Admin Only Mode OFF (Everyone can use bot)"
+		);
+	},
+
+	onChat: async function ({ event }) {
+		const senderID = String(event.senderID);
+
+		const admins = (global.GoatBot.config.adminBot || []).map(id => String(id));
+
+		if (global.GoatBot.config.adminOnly?.enable) {
+			if (!admins.includes(senderID)) {
+				return; // silent ignore
+			}
+		}
 	}
 };

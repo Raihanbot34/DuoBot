@@ -3,17 +3,17 @@ const fs = require("fs-extra");
 const path = require("path");
 
 const ownerInfo = {
-  name: "𝐄w'𝐫 𝐒𝐚𝐢𝐦",
-  facebook: "https://facebook.com/61565898444113",
-  telegram: "@saimx69x",
-  supportGroup: "https://m.me/j/AbZP4jRGu45w70du/"
+  name: "𝐄w'𝐫 Ajmaul",
+  facebook: "https://www.facebook.com/share/1AiyPdf37u/",
+  telegram: "@ajmaul2372",
+  tg chennel: "https://t.me/+4W0YQHaj3s5iMDE9"
 };
 
 module.exports = {
   config: {
     name: "botjoin",
     version: "2.0",
-    author: "Saimx69x",
+    author: "Ajmaul",
     category: "events"
   },
 
